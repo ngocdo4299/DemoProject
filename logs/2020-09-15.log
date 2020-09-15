@@ -1,1 +1,2 @@
 {"message":"createUser ValidationError: priority: Priority field is required","level":"info","timestamp":"2020-09-15T09:38:48.001Z"}
+{"message":"getProjectTypeDetail CastError: Cast to ObjectId failed for value \"{ id: '5f608bb1a965dac0d8dde265' }\" at path \"_id\" for model \"projecttTypes\"","level":"info","timestamp":"2020-09-15T10:26:57.610Z"}

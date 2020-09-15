@@ -1,6 +1,7 @@
 import { ProjectType } from '../../../model/projectTypes.js';
 import { logger } from '../../../helper/logger.js';
 import { errorResponse } from '../../../helper/response.js';
+
 export const createNewProjectType = async (data) => {
   try {
     const projectType = await ProjectType.findOne({ name: data.name });
@@ -18,12 +19,36 @@ export const createNewProjectType = async (data) => {
 
       return {
         status: 404,
-        code: 'PROJECT_TYPE_EXITED',
+        code: 'PROJECT_TYPE_EXISTED',
         error: true,
       };
     }
   } catch (err) {
-    logger(`createUser ${err}`);
+    logger(`createNewProjectType ${err}`);
+
+    return errorResponse;
+  }
+};
+
+export const getProjectTypeDetail = async (id) => {
+  try {
+    const projectType = await ProjectType.findOne({ _id: id }, ['_id', 'name', 'description', 'priority', 'status']);
+    if(projectType){
+      return {
+        status: 200,
+        code: 'GET_PROJECT_TYPE_DETAIL_SUCESS',
+        error: false,
+        data: projectType,
+      };
+    }else{
+      return {
+        status: 404,
+        code: 'PROJECT_TYPE_NOT_EXIST',
+        error: true,
+      };
+    }
+  }catch (err) {
+    logger(`getProjectTypeDetail ${err}`);
 
     return errorResponse;
   }

@@ -1,4 +1,4 @@
-import { createNewProjectType } from './projectTypeController.js';
+import { createNewProjectType, getProjectTypeDetail } from './projectTypeController.js';
 
 export const createNewType = async (req, res) => {
   const requiredFields = [ 'name', 'description', 'priority' ];
@@ -21,5 +21,37 @@ export const createNewType = async (req, res) => {
   const result = await createNewProjectType(req.body);
   res.status(result.status).json(result);
 
+};
+
+export const getTypeDetail = async (req, res) => {
+  const result = await getProjectTypeDetail(req.params.id);
+  res.status(result.status).json(result);
+};
+
+export const getTypeList = async (req, res) => {
+  const result = {
+    status: 200,
+    code: 'GET_PROJECT_TYPE_LIST_SUCCESS',
+    error: false,
+  };
+  res.status(result.status).json(result);
+};
+
+export const updateType = async (req, res) => {
+  const result = {
+    status: 200,
+    code: 'UPDATE_PROJECT_TYPE_SUCCESS',
+    error: false,
+  };
+  res.status(result.status).json(result);
+};
+
+export const deleteType = async (req, res) => {
+  const result = {
+    status: 200,
+    code: 'DELETE_PROJECT_TYPE_SUCCESS',
+    error: false,
+  };
+  res.status(result.status).json(result);
 };
 

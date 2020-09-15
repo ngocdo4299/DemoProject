@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-// import { logger } from '../helper/logger.js';
 const Schema = mongoose.Schema;
 
 const projectTypeSchema = new Schema({
