@@ -17,4 +17,4 @@ const projectStatusSchema = new Schema({
   },
 }, { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } });
 
-export const projectStatus = mongoose.model('projectStatus', projectStatusSchema);
+export const ProjectStatus = mongoose.model('projectStatus', projectStatusSchema);

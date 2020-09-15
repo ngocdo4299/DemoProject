@@ -17,4 +17,4 @@ const techStackSchema = new Schema({
   },
 }, { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } });
 
-export const techStack = mongoose.model('techStacks', techStackSchema);
+export const TechStack = mongoose.model('techStacks', techStackSchema);

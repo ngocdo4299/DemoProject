@@ -21,4 +21,4 @@ const projectTypeSchema = new Schema({
   },
 }, { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } });
 
-export const projectType = mongoose.model('projectTypes', projectTypeSchema);
+export const ProjectType = mongoose.model('projectTypes', projectTypeSchema);

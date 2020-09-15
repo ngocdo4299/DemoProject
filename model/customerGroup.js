@@ -21,4 +21,4 @@ const customerGroupSchema = new Schema({
   },
 }, { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } });
 
-export const customerGroup = mongoose.model('customerGroups', customerGroupSchema);
+export const CustomerGroup = mongoose.model('customerGroups', customerGroupSchema);
