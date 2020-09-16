@@ -53,3 +53,55 @@ export const getProjectTypeDetail = async (id) => {
     return errorResponse;
   }
 };
+
+export const updateProjectType = async ( id, data ) => {
+  try {
+    const projectType = await ProjectType.findOne({ _id: id });
+    if(projectType){
+      await projectType.updateOne(data);
+
+      return {
+        status: 200,
+        code: 'UPDATE_PROJECT_TYPE_SUCCESS',
+        error: false,
+        data: data,
+      };
+    }else {
+      return {
+        status: 404,
+        code: 'PRODUCT_TYPE_NOT_FOUND',
+        error: true,
+      };
+    }
+  }catch( err ) {
+    logger(`updateProjectType ${err}`);
+
+    return errorResponse;
+  }
+};
+
+export const deleteProjectType = async (id) => {
+  try {
+    const projectType = await ProjectType.findOne({ _id: id });
+    if(projectType){
+      await projectType.deleteOne();
+
+      return {
+        status: 200,
+        code: 'DELETE_PROJECT_TYPE_SUCCESS',
+        error: false,
+      };
+    }else{
+
+      return {
+        status: 404,
+        code: 'PRODUCT_TYPE_NOT_FOUND',
+        error: true,
+      };
+    }
+  }catch( err ){
+    logger(`deleteProjectType ${err}`);
+
+    return errorResponse;
+  }
+};
