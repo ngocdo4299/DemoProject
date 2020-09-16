@@ -1,4 +1,4 @@
-import { createNewProjectType, deleteProjectType, getProjectTypeDetail, updateProjectType } from './projectTypeController.js';
+import { createNewProjectType, deleteProjectType, getListProjectTypes, getProjectTypeDetail, updateProjectType } from './projectTypeController.js';
 
 export const createNewType = async (req, res) => {
   const requiredFields = [
@@ -44,11 +44,48 @@ export const getTypeDetail = async (req, res) => {
 };
 
 export const getTypeList = async (req, res) => {
-  const result = {
-    status: 200,
-    code: 'GET_PROJECT_TYPE_LIST_SUCCESS',
-    error: false,
+  const acceptableSortBy = ['name', 'priority'];
+  const acceptableSortOrder = {
+    'asce': 1,
+    'desc': -1,
   };
+  let queryParams = {
+    'search': undefined,
+    'page': 1,
+    'limit': 10,
+    'sortBy': 'name',
+    'sortOrder': 1,
+  };
+  if( req.query.search ){
+    queryParams.search = req.query.search.toString();
+  }
+
+  if(req.query.page){
+    if( Number.isInteger(parseInt(req.query.page)) && parseInt(req.query.page) > 0 ){
+      queryParams.page = parseInt(req.query.page);
+    }
+  }
+
+  if(req.query.limit){
+    if( Number.isInteger(parseInt(req.query.limit)) && parseInt(req.query.limit) > 0) {
+      queryParams.limit = parseInt(req.query.limit);
+    }
+  }
+
+  if( req.query.sortBy){
+    if( acceptableSortBy.includes(req.query.sortBy) ){
+      queryParams.sortBy = req.query.sortBy;
+    }
+  }
+
+  if( req.query.sortOrder ){
+    const sortOrder = req.query.sortOrder.toString().trim();
+    if( sortOrder in acceptableSortOrder){
+      queryParams.sortOrder = acceptableSortOrder[sortOrder];
+    }
+  }
+
+  const result = await getListProjectTypes(queryParams);
   res.status(result.status).json(result);
 };
 
