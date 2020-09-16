@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import admin from './routes/admin.js';
 import projectType from './routes/projectTypes.js';
 import projectStatus from './routes/projectStatus.js';
+import tectStack from './routes/techStack.js';
 
 dotenv.config({
   path: '.env',
@@ -24,7 +25,7 @@ mongoose.Promise = global.Promise;
 
 app.use(bodyParser.json());
 
-app.use('/api', [admin, projectType, projectStatus]);
+app.use('/api', [admin, projectType, projectStatus, tectStack]);
 
 const expressPort = process.env.PORT || 8080;
 app.listen(expressPort, () => {

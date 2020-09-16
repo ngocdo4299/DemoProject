@@ -86,7 +86,7 @@ export const getProjectStatuses = async (params) => {
 
       return {
         status: 200,
-        code: 'GET_LIST_USER_SUCCESS',
+        code: 'GET_LIST_PRODUCT_STATUS_SUCCESS',
         error: false,
         message: `Page: ${params.page}/${totalPage}`,
         data: projectStatus,

@@ -6,6 +6,7 @@ const techStackSchema = new Schema({
   name: {
     type: String,
     required: [true, 'Name field is required'],
+    unique: true,
   },
   description: {
     type: String,
