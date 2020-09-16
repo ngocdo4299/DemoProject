@@ -40,7 +40,7 @@
       "comma-spacing": "error",
       "comma-dangle": ["error", "always-multiline"],
       "func-call-spacing": "error",
-      "max-len": ["error", 150],
+      "max-len": ["error", 200],
       "no-confusing-arrow": "error",
       "no-trailing-spaces": "error",
       "curly": ["error", "all"],

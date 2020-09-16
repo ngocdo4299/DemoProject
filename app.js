@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import admin from './routes/admin.js';
 import projectType from './routes/projectTypes.js';
+import projectStatus from './routes/projectStatus.js';
 
 dotenv.config({
   path: '.env',
@@ -23,7 +24,7 @@ mongoose.Promise = global.Promise;
 
 app.use(bodyParser.json());
 
-app.use('/api', [admin, projectType]);
+app.use('/api', [admin, projectType, projectStatus]);
 
 const expressPort = process.env.PORT || 8080;
 app.listen(expressPort, () => {
