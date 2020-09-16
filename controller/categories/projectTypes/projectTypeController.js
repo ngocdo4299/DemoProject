@@ -136,7 +136,7 @@ export const getListProjectTypes = async (params) => {
 
       return {
         status: 200,
-        code: 'GET_LIST_USER_SUCCESS',
+        code: 'GET_LIST_PRODUCT_TYPES_SUCCESS',
         error: false,
         message: `Page: ${params.page}/${totalPage}`,
         data: projectTypes,
