@@ -1,3 +1,4 @@
+import { removeEmpty } from '../../../helper/removeEmpty.js';
 import { createNewProjectType, deleteProjectType, getListProjectTypes, getProjectTypeDetail, updateProjectType } from './projectTypeController.js';
 
 export const createNewType = async (req, res) => {
@@ -98,10 +99,10 @@ export const updateType = async (req, res) => {
   ];
 
   let updateData = {
-    'name': undefined,
-    'description': undefined,
-    'priority': undefined,
-    'status': undefined,
+    'name': null,
+    'description': null,
+    'priority': null,
+    'status': null,
   };
 
   for( let field of acceptableFields){
@@ -122,8 +123,7 @@ export const updateType = async (req, res) => {
       }}
   }
 
-  JSON.parse(JSON.stringify(updateData));
-  const result = await updateProjectType(req.params.id, updateData);
+  const result = await updateProjectType(req.params.id, removeEmpty(updateData));
   res.status(result.status).json(result);
 };
 

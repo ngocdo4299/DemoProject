@@ -1,5 +1,5 @@
 import { createNewCustomerGroup, deleteCustomerGroup, getListCustomerGroups, getCustomerGroupDetail, updateCustomerGroup } from './customerGroupController.js';
-
+import { removeEmpty } from '../../../helper/removeEmpty.js';
 export const createCustomerGroup = async (req, res) => {
   const requiredFields = [
     { 'key': 'name', 'type': 'string' },
@@ -122,8 +122,7 @@ export const updateGroup = async (req, res) => {
       }}
   }
 
-  JSON.parse(JSON.stringify(updateData));
-  const result = await updateCustomerGroup(req.params.id, updateData);
+  const result = await updateCustomerGroup(req.params.id, removeEmpty(req.body) );
   res.status(result.status).json(result);
 };
 

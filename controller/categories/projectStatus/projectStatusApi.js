@@ -1,4 +1,5 @@
 import { createNewProjectStatus, deleteProjectStatus, getProjectStatusDetail, getProjectStatuses, updateProjectStatus } from './projectStatusController.js';
+import { removeEmpty } from '../../../helper/removeEmpty.js';
 
 export const createStatus = async (req, res) => {
 
@@ -118,8 +119,7 @@ export const updateStatus = async (req, res) => {
       }}
   }
 
-  JSON.parse(JSON.stringify(updateData));
-  const result = await updateProjectStatus(req.params.id, updateData);
+  const result = await updateProjectStatus(req.params.id, removeEmpty(req.body));
   res.status(result.status).json(result);
 };
 

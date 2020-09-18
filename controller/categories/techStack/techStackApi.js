@@ -1,4 +1,5 @@
 import { createNewTechStack, deleteTechStack, getTechStackDetail, getTechStacks, updateTechStack } from './teckStackController.js';
+import { removeEmpty } from '../../../helper/removeEmpty.js';
 
 export const createTechStack = async (req, res) => {
 
@@ -118,8 +119,7 @@ export const updateTech = async (req, res) => {
       }}
   }
 
-  JSON.parse(JSON.stringify(updateData));
-  const result = await updateTechStack(req.params.id, updateData);
+  const result = await updateTechStack(req.params.id, removeEmpty(updateData));
   res.status(result.status).json(result);
 };
 
