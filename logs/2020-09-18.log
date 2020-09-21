@@ -1,5 +1,0 @@
-{"message":"createNewEmployee ValidationError: techStackList.0.techStack: Cast to ObjectId failed for value \"g\" at path \"techStack\"","level":"info","timestamp":"2020-09-18T04:20:14.134Z"}
-{"message":"createNewEmployee ValidationError: techStackList.0.techStack: Cast to ObjectId failed for value \"g\" at path \"techStack\"","level":"info","timestamp":"2020-09-18T04:25:54.695Z"}
-{"message":"createNewEmployee ValidationError: techStackList.0.techStack: Cast to ObjectId failed for value \"g\" at path \"techStack\"","level":"info","timestamp":"2020-09-18T04:36:18.733Z"}
-{"message":"createNewEmployee ReferenceError: newEmployee is not defined","level":"info","timestamp":"2020-09-18T04:36:33.700Z"}
-{"message":"getEmployeeDetail MissingSchemaError: Schema hasn't been registered for model \"projects\".\nUse mongoose.model(name, schema)","level":"info","timestamp":"2020-09-18T08:23:26.723Z"}

@@ -1,6 +1,0 @@
-{"message":"updateProjectType CastError: Cast to ObjectId failed for value \"search\" at path \"_id\" for model \"projectTypes\"","level":"info","timestamp":"2020-09-16T04:00:35.952Z"}
-{"message":"updateProjectType CastError: Cast to ObjectId failed for value \"123\" at path \"_id\" for model \"projectTypes\"","level":"info","timestamp":"2020-09-16T04:00:49.413Z"}
-{"message":"updateProjectType CastError: Cast to ObjectId failed for value \"5f608bb1a\" at path \"_id\" for model \"projectTypes\"","level":"info","timestamp":"2020-09-16T04:01:01.419Z"}
-{"message":"updateProjectType CastError: Cast to ObjectId failed for value \"5f608bb1a965dac0d8dde26\" at path \"_id\" for model \"projectTypes\"","level":"info","timestamp":"2020-09-16T04:01:07.785Z"}
-{"message":"getListProjectTypes Error: sort() only takes 1 Argument","level":"info","timestamp":"2020-09-16T08:02:15.945Z"}
-{"message":"getListProjectTypes Error: sort() only takes 1 Argument","level":"info","timestamp":"2020-09-16T08:07:03.661Z"}
