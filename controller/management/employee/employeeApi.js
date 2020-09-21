@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { removeEmpty } from '../../../helper/removeEmpty.js';
-import { createNewEmployee, getEmployeeDetail } from './employeeController.js';
+import { createNewEmployee, deleteOneEmployee, getEmployeeDetail, updateEmployeeDetail } from './employeeController.js';
 
 export const createEmployee = async (req, res) => {
 
@@ -142,6 +142,19 @@ export const updateEmployee = async ( req, res ) => {
 
   for( let field of acceptableFields){
     if( field.key in req.body ) {
+      if( field.key === 'DoB' ){
+        // check if DoB is in valid form
+        if( !moment(req.body.DoB, 'YYYY-MM-DD', true).isValid() ){
+          res.status(404).json(
+            {
+              status: 404,
+              code: 'DOB_IS_INVALID',
+              error: true,
+              message: 'YYYY-MM-DD format required, example: 1999-04-02 ',
+            },
+          );
+        }
+      }
       if(field.key === 'techStackList'){
         // check if tech stack list in req body has all required fields
         if( Array.isArray(req.body.techStackList) ){
@@ -156,7 +169,6 @@ export const updateEmployee = async ( req, res ) => {
                     message: `${field.key} is required`,
                   },
                 );
-
               }
               if( field.key in e && typeof e[field.key] !== field.type ) {
                 res.status(404).json(
@@ -167,7 +179,6 @@ export const updateEmployee = async ( req, res ) => {
                     message: `${field.key} must be a ${field.type}`,
                   },
                 );
-
               }
             }
           });
@@ -180,9 +191,7 @@ export const updateEmployee = async ( req, res ) => {
             },
           );
         }
-
       }
-
       if (typeof req.body[field.key] !== field.type ) {
         res.status(404).json(
           {
@@ -199,10 +208,12 @@ export const updateEmployee = async ( req, res ) => {
       }}
   }
 
-  const result = {
-    status: 200,
-    data: removeEmpty(updateData),
-  };
+  const result = await updateEmployeeDetail( req.params.id, removeEmpty( req.body ));
 
+  res.status(result.status).json(result);
+};
+
+export const deleteEmployee = async (req, res) => {
+  const result = await deleteOneEmployee(req.params.id);
   res.status(result.status).json(result);
 };

@@ -5,12 +5,12 @@ const router = express.Router();
 
 router.post('/employee/', verifyToken, createEmployee);
 
-// router.get('/status/', verifyToken, getStatus);
+// router.get('/employee/', verifyToken, getStatus);
 
 router.get('/employee/:id', verifyToken, getEmployee);
 
 router.put('/employee/:id', verifyToken, updateEmployee);
 
-// router.delete('/status/:id', verifyToken, deleteStatus);
+// router.delete('/employee/:id', verifyToken, deleteStatus);
 
 export default router;

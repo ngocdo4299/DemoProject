@@ -8,10 +8,10 @@ import { TechStack } from '../../../model/techStack.js';
 export const createNewEmployee = async (data) => {
   try {
     const employee = await Employee.findOne({ idNumber: data.idNumber });
-    if(employee){
+    if(employee || employee.status !== 'active'){
       return {
         status: 404,
-        code: 'ID_NUMBER_DUPLICATED',
+        code: 'EMPLOYEE_EXISTED',
         error: true,
       };
     }else{
@@ -46,7 +46,7 @@ export const createNewEmployee = async (data) => {
 
 export const getEmployeeDetail = async (id) => {
   try {
-    let employee = await Employee.findOne({ _id : id }, 'fullName DoB idNumber phoneNumber address techStackList projectList')
+    let employee = await Employee.findOne({ _id : id, status: 'active' }, 'fullName DoB idNumber phoneNumber address techStackList projectList')
       .populate({
         path: 'techStackList',
         populate: {
@@ -92,6 +92,72 @@ export const getEmployeeDetail = async (id) => {
     }
   }catch(err){
     logger(`getEmployeeDetail ${err}`);
+
+    return errorResponse;
+  }
+};
+
+export const updateEmployeeDetail = async ( id, data ) => {
+  try {
+    const employee = await Employee.findOne({ _id: id, status: 'active' });
+    if(!employee){
+      return {
+        status: 404,
+        code: 'EMPLOYEE_NOT_FOUND',
+        error: true,
+      };
+    }else {
+      if( data.techStackList ){
+        for( let e of data.techStackList){
+          // eslint-disable-next-line no-await-in-loop
+          const findStack = await TechStack.findOne({ _id: e.techStack });
+          if( !findStack) {
+            return {
+              status: 404,
+              code: 'TECH_STACK_NOT_FOUND',
+              error: true,
+              message: `TechStack with id data: ${e.techStack} is not existed`,
+              data: e.techStack,
+            };
+          }
+        }
+      }
+
+      await employee.updateOne(data);
+
+      return {
+        status: 200,
+        code: 'UPDATE_EMPLOYEE_SUCCESS',
+        error: false,
+      };
+    }
+  } catch ( err ){
+    logger(`updateEmployeeDetail ${err}`);
+
+    return errorResponse;
+  }
+};
+
+export const deleteOneEmployee = async ( id ) => {
+  try {
+    const employee = await Employee.findOne({ _id: id, status: 'active' });
+    if(!employee){
+      return {
+        status: 404,
+        code: 'EMPLOYEE_NOT_FOUND',
+        error: true,
+      };
+    }else {
+      await employee.updateOne({ status: 'deleted' });
+
+      return {
+        status: 200,
+        code: 'DELETE_EMPLOYEE_SUCCESS',
+        error: false,
+      };
+    }
+  } catch ( err ) {
+    logger(`deleteOneEmployee ${err}`);
 
     return errorResponse;
   }

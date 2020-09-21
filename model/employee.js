@@ -57,6 +57,10 @@ const employee = new Schema({
       },
     },
   ],
+  status: {
+    type: String,
+    default: 'active',
+  },
 }, { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } });
 
 export const Employee = mongoose.model('employees', employee);
