@@ -6,24 +6,22 @@ export const createNewProjectStatus = async (data) => {
   try {
     const projectStatus = await ProjectStatus.findOne({ name: data.name });
 
-    if (!projectStatus) {
-      const newProjectStatus = await ProjectStatus.create(data);
-
-      return {
-        status: 200,
-        code: 'CREATE_NEW_PROJECT_STATUS_SUCCESS',
-        error: false,
-        data: newProjectStatus._id,
-      };
-    }
-    else {
-
+    if (projectStatus) {
       return {
         status: 404,
         code: 'PROJECT_STATUS_EXISTED',
         error: true,
       };
+
     }
+    const newProjectStatus = await ProjectStatus.create(data);
+
+    return {
+      status: 200,
+      code: 'CREATE_NEW_PROJECT_STATUS_SUCCESS',
+      error: false,
+      data: newProjectStatus._id,
+    };
 
   }catch (err) {
     logger(`createNewProjectStatus ${err}`);
@@ -35,20 +33,21 @@ export const createNewProjectStatus = async (data) => {
 export const getProjectStatusDetail = async (id) => {
   try {
     const projectStatus = await ProjectStatus.findOne({ _id: id }, ['_id', 'name', 'description', 'status']);
-    if(projectStatus){
-      return {
-        status: 200,
-        code: 'GET_PROJECT_STATUS_DETAIL_SUCESS',
-        error: false,
-        data: projectStatus,
-      };
-    }else{
+    if (!projectStatus){
       return {
         status: 404,
         code: 'PROJECT_STATUS_NOT_EXIST',
         error: true,
       };
+
     }
+
+    return {
+      status: 200,
+      code: 'GET_PROJECT_STATUS_DETAIL_SUCESS',
+      error: false,
+      data: projectStatus,
+    };
   }catch (err) {
     logger(`getProjectStatusDetail ${err}`);
 
@@ -102,22 +101,21 @@ export const getProjectStatuses = async (params) => {
 export const updateProjectStatus = async (id, data) => {
   try {
     const projectStatus = await ProjectStatus.findOne({ _id: id });
-    if(projectStatus){
-      await projectStatus.updateOne(data);
-
-      return {
-        status: 200,
-        code: 'UPDATE_PROJECT_STATUS_SUCCESS',
-        error: false,
-        data: data,
-      };
-    }else {
+    if (!projectStatus){
       return {
         status: 404,
         code: 'PROJECT_STATUS_NOT_FOUND',
         error: true,
       };
     }
+    await projectStatus.updateOne(data);
+
+    return {
+      status: 200,
+      code: 'UPDATE_PROJECT_STATUS_SUCCESS',
+      error: false,
+      data: data,
+    };
   }catch(err) {
     logger(`updateProjectStatus ${err}`);
 
@@ -128,20 +126,19 @@ export const updateProjectStatus = async (id, data) => {
 export const deleteProjectStatus = async (id) => {
   try {
     const projectStatus = await ProjectStatus.findOne({ _id: id });
-    if(projectStatus){
-      await projectStatus.deleteOne();
+    if (!projectStatus){
+      return {
+        status: 404,
+        code: 'PROJECT_STATUS_NOT_FOUND',
+        error: true,
+      };
+    }else{
+      await projectStatus.updateOne({ status: 'deleted' });
 
       return {
         status: 200,
         code: 'DELETE_PROJECT_STATUS_SUCCESS',
         error: false,
-      };
-    }else{
-
-      return {
-        status: 404,
-        code: 'PROJECT_STATUS_NOT_FOUND',
-        error: true,
       };
     }
   }catch(err) {

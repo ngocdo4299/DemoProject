@@ -30,22 +30,13 @@ const project = new Schema({
       },
     },
   ],
-  projectTypes: [
-    {
-      projectType:
-      {
-        type: ObjectId,
-        ref: 'projecttypes',
-      },
-    },
-  ],
+  projectType: {
+    type: ObjectId,
+    ref: 'projecttypes',
+  },
   projectStatus: {
     type: ObjectId,
     ref: 'projectstatuses',
-  },
-  departments: {
-    type: ObjectId,
-    ref: 'departments',
   },
   employees: [
     {

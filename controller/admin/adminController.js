@@ -6,8 +6,16 @@ import { logger } from '../../helper/logger.js';
 const loginUser = async (req) => {
   try {
     const data = req.body;
-    const result = await Admin.verifyPassword(data);
-    if (!result.error) {
+    const admin = await Admin.findOne({ userName: data.userName, status: 'active' });
+    if (!admin){
+      return {
+        status: 404,
+        code: 'USER_NOT_FOUND',
+        error: true,
+      };
+    }
+    const result = await Admin.verifyPassword( admin.password, data.password );
+    if (result) {
       const token = await generateToken(result.message, 60 * 60);
 
       return {
@@ -16,14 +24,14 @@ const loginUser = async (req) => {
         error: false,
         data: token,
       };
-    } else {
-      return {
-        status: 203,
-        code: 'TOKEN_GENERATE_FAILED',
-        error: true,
-        message: result.message,
-      };
     }
+
+    return {
+      status: 203,
+      code: 'TOKEN_GENERATE_FAILED',
+      error: true,
+      message: result.message,
+    };
   } catch (err) {
     logger(`loginUser ${err}`);
 
@@ -35,23 +43,22 @@ const createUser = async (req) => {
   const data = req.body;
   try {
     const user = await Admin.findOne({ userName: data.userName, status: 'active' });
-    if (!user) {
-      const newUser = await Admin.create(data);
+    if (user) {
 
-      return {
-        status: 200,
-        code: 'CREATE_NEW_ADMIN_SUCCESS',
-        error: false,
-        data: newUser._id,
-      };
-    }
-    else {
       return {
         status: 404,
         code: 'USER_EXISTED',
         error: true,
       };
     }
+    const newUser = await Admin.create(data);
+
+    return {
+      status: 200,
+      code: 'CREATE_NEW_ADMIN_SUCCESS',
+      error: false,
+      data: newUser._id,
+    };
   } catch (err) {
     logger(`createUser ${err}`);
 

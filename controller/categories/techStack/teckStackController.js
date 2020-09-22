@@ -6,25 +6,21 @@ export const createNewTechStack = async (data) => {
   try {
     const techStack = await TechStack.findOne({ name: data.name });
 
-    if (!techStack) {
-      const newTechStack = await TechStack.create(data);
-
-      return {
-        status: 200,
-        code: 'CREATE_NEW_TECH_STACK_SUCCESS',
-        error: false,
-        data: newTechStack._id,
-      };
-    }
-    else {
-
+    if (techStack) {
       return {
         status: 404,
         code: 'TECH_STACK_EXISTED',
         error: true,
       };
     }
+    const newTechStack = await TechStack.create(data);
 
+    return {
+      status: 200,
+      code: 'CREATE_NEW_TECH_STACK_SUCCESS',
+      error: false,
+      data: newTechStack._id,
+    };
   }catch (err) {
     logger(`createNewTechStack ${err}`);
 
@@ -35,20 +31,20 @@ export const createNewTechStack = async (data) => {
 export const getTechStackDetail = async (id) => {
   try {
     const techStack = await TechStack.findOne({ _id: id }, ['_id', 'name', 'description', 'status']);
-    if(techStack){
-      return {
-        status: 200,
-        code: 'GET_TECH_STACK_DETAIL_SUCESS',
-        error: false,
-        data: techStack,
-      };
-    }else{
+    if (!techStack){
       return {
         status: 404,
         code: 'TECH_STACK_NOT_EXIST',
         error: true,
       };
     }
+
+    return {
+      status: 200,
+      code: 'GET_TECH_STACK_DETAIL_SUCESS',
+      error: false,
+      data: techStack,
+    };
   }catch (err) {
     logger(`getTechStackDetail ${err}`);
 
@@ -102,22 +98,21 @@ export const getTechStacks = async (params) => {
 export const updateTechStack = async (id, data) => {
   try {
     const techStack = await TechStack.findOne({ _id: id });
-    if(techStack){
-      await techStack.updateOne(data);
-
-      return {
-        status: 200,
-        code: 'UPDATE_TECH_STACK_SUCCESS',
-        error: false,
-        data: data,
-      };
-    }else {
+    if (!techStack){
       return {
         status: 404,
         code: 'PROJECT_TECH_STACK_FOUND',
         error: true,
       };
     }
+    await techStack.updateOne(data);
+
+    return {
+      status: 200,
+      code: 'UPDATE_TECH_STACK_SUCCESS',
+      error: false,
+      data: data,
+    };
   }catch(err) {
     logger(`updateTechStack ${err}`);
 
@@ -128,22 +123,20 @@ export const updateTechStack = async (id, data) => {
 export const deleteTechStack = async (id) => {
   try {
     const techStack = await TechStack.findOne({ _id: id });
-    if(techStack){
-      await techStack.deleteOne();
-
-      return {
-        status: 200,
-        code: 'DELETE_PROJECT_STATUS_SUCCESS',
-        error: false,
-      };
-    }else{
-
+    if (!techStack){
       return {
         status: 404,
         code: 'PROJECT_STATUS_NOT_FOUND',
         error: true,
       };
     }
+    await techStack.updateOne({ status: 'deleted' });
+
+    return {
+      status: 200,
+      code: 'DELETE_PROJECT_STATUS_SUCCESS',
+      error: false,
+    };
   }catch(err) {
     logger(`deleteTechStack ${err}`);
 

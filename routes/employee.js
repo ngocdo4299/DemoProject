@@ -1,5 +1,5 @@
 import express from 'express';
-import { createEmployee, getEmployee, updateEmployee } from '../controller/management/employee/employeeApi.js';
+import { createEmployee, deleteEmployee, getEmployee, updateEmployee } from '../controller/management/employee/employeeApi.js';
 import { verifyToken } from '../middleware/verifyToken.js';
 const router = express.Router();
 
@@ -11,6 +11,6 @@ router.get('/employee/:id', verifyToken, getEmployee);
 
 router.put('/employee/:id', verifyToken, updateEmployee);
 
-// router.delete('/employee/:id', verifyToken, deleteStatus);
+router.delete('/employee/:id', verifyToken, deleteEmployee);
 
 export default router;

@@ -31,17 +31,11 @@ AdminSchema.pre('save', async function save(next) {
   }
 });
 
-AdminSchema.statics.verifyPassword = async function (verifyUser) {
-  const user = await this.findOne({ userName: verifyUser.userName, status: 'active' });
-  if (!user){
-    return { error: true, message: 'Username not found' };
-  }
-  else {
-    if (user && bcrypt.compareSync(verifyUser.password, user.password)) {
-      return { error: false, message: { fullname: user.fullName, username: user.userName } };
-    } else {
-      return { error: true, message: 'Incorrect password' };
-    }
+AdminSchema.statics.verifyPassword = async function (userPassword, unverifiedPassword) {
+  if ( bcrypt.compareSync(unverifiedPassword, userPassword)) {
+    return true;
+  } else {
+    return false;
   }
 };
 export const Admin = mongoose.model('admin', AdminSchema);

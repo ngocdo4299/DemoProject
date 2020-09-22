@@ -10,7 +10,7 @@ export const createTechStack = async (req, res) => {
 
   for( let field of requiredFields){
     if(!(field.key in req.body)){
-      res.status(404).json(
+      return res.status(404).json(
         {
           status: 404,
           code: `${field.key.toUpperCase()}_IS_REQUIRED`,
@@ -19,9 +19,8 @@ export const createTechStack = async (req, res) => {
         },
       );
 
-      return 0;
     }else if( field.key in req.body && typeof req.body[field.key] !== field.type ) {
-      res.status(404).json(
+      return res.status(404).json(
         {
           status: 404,
           code: `${field.key.toUpperCase()}_IS_A_${field.type.toUpperCase()}`,
@@ -30,7 +29,6 @@ export const createTechStack = async (req, res) => {
         },
       );
 
-      return 0;
     }
   }
 
@@ -104,7 +102,7 @@ export const updateTech = async (req, res) => {
   for( let field of acceptableFields){
     if( field.key in req.body ) {
       if (typeof req.body[field.key] !== field.type ) {
-        res.status(404).json(
+        return res.status(404).json(
           {
             status: 404,
             code: `${field.key.toUpperCase()}_IS_A_${field.type.toUpperCase()}`,
@@ -113,10 +111,9 @@ export const updateTech = async (req, res) => {
           },
         );
 
-        return 0;
-      } else {
-        updateData[field.key] = req.body[field.key];
-      }}
+      }
+      updateData[field.key] = req.body[field.key];
+    }
   }
 
   const result = await updateTechStack(req.params.id, removeEmpty(updateData));

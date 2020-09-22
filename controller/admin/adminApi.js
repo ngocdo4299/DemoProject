@@ -7,8 +7,8 @@ export const login = async (req, res) => {
   ];
 
   for( let field of requiredFields){
-    if(!(field.key in req.body)){
-      res.status(404).json(
+    if (!(field.key in req.body)){
+      return res.status(404).json(
         {
           status: 404,
           code: `${field.key.toUpperCase()}_IS_REQUIRED`,
@@ -17,9 +17,8 @@ export const login = async (req, res) => {
         },
       );
 
-      return 0;
     }else if( field.key in req.body && typeof req.body[field.key] !== field.type ) {
-      res.status(404).json(
+      return res.status(404).json(
         {
           status: 404,
           code: `${field.key.toUpperCase()}_IS_A_${field.type.toUpperCase()}`,
@@ -28,7 +27,6 @@ export const login = async (req, res) => {
         },
       );
 
-      return 0;
     }
   }
   const result = await loginUser(req);
@@ -42,8 +40,8 @@ export const registry = async (req, res) => {
   ];
 
   for( let field of requiredFields){
-    if(!(field.key in req.body)){
-      res.status(404).json(
+    if (!(field.key in req.body)){
+      return res.status(404).json(
         {
           status: 404,
           code: `${field.key.toUpperCase()}_IS_REQUIRED`,
@@ -52,9 +50,8 @@ export const registry = async (req, res) => {
         },
       );
 
-      return 0;
     }else if( field.key in req.body && typeof req.body[field.key] !== field.type ) {
-      res.status(404).json(
+      return res.status(404).json(
         {
           status: 404,
           code: `${field.key.toUpperCase()}_IS_A_${field.type.toUpperCase()}`,
@@ -63,7 +60,6 @@ export const registry = async (req, res) => {
         },
       );
 
-      return 0;
     }
   }
   const result = await createUser(req);

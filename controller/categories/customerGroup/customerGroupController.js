@@ -4,25 +4,23 @@ import { errorResponse } from '../../../helper/response.js';
 
 export const createNewCustomerGroup = async (data) => {
   try {
-    const customerGroup = await CustomerGroup.findOne({ name: data.name });
-    if (!customerGroup) {
-      const newCustomerGroup = await CustomerGroup.create(data);
-
-      return {
-        status: 200,
-        code: 'CREATE_NEW_CUSTOMER_GROUP_SUCCESS',
-        error: false,
-        data: newCustomerGroup._id,
-      };
-    }
-    else {
-
+    const customerGroup = await CustomerGroup.findOne({ name: data.name }).lean();
+    if (customerGroup) {
       return {
         status: 404,
         code: 'CUSTOMER_GROUP_EXISTED',
         error: true,
       };
+
     }
+    const newCustomerGroup = await CustomerGroup.create(data);
+
+    return {
+      status: 200,
+      code: 'CREATE_NEW_CUSTOMER_GROUP_SUCCESS',
+      error: false,
+      data: newCustomerGroup._id,
+    };
   } catch (err) {
     logger(`createNewCustomerGroup ${err}`);
 
@@ -33,20 +31,20 @@ export const createNewCustomerGroup = async (data) => {
 export const getCustomerGroupDetail = async (id) => {
   try {
     const customerGroup = await CustomerGroup.findOne({ _id: id }, ['_id', 'name', 'description', 'priority', 'status']);
-    if(customerGroup){
-      return {
-        status: 200,
-        code: 'GET_CUSTOMER_GROUP_DETAIL_SUCESS',
-        error: false,
-        data: customerGroup,
-      };
-    }else{
+    if ( !customerGroup ){
       return {
         status: 404,
         code: 'CUSTOMER_GROUP_NOT_EXIST',
         error: true,
       };
     }
+
+    return {
+      status: 200,
+      code: 'GET_CUSTOMER_GROUP_DETAIL_SUCESS',
+      error: false,
+      data: customerGroup,
+    };
   }catch (err) {
     logger(`getCustomerGroupDetail ${err}`);
 
@@ -57,22 +55,22 @@ export const getCustomerGroupDetail = async (id) => {
 export const updateCustomerGroup = async ( id, data ) => {
   try {
     const customerGroup = await CustomerGroup.findOne({ _id: id });
-    if(customerGroup){
-      await customerGroup.updateOne(data);
-
-      return {
-        status: 200,
-        code: 'UPDATE_CUSTOMER_GROUP_SUCCESS',
-        error: false,
-        data: data,
-      };
-    }else {
+    if( !customerGroup ){
       return {
         status: 404,
         code: 'CUSTOMER_GROUP_NOT_FOUND',
         error: true,
       };
     }
+    await customerGroup.updateOne(data);
+
+    return {
+      status: 200,
+      code: 'UPDATE_CUSTOMER_GROUP_SUCCESS',
+      error: false,
+      data: data,
+    };
+
   }catch( err ) {
     logger(`updateCustomerGroup ${err}`);
 
@@ -83,22 +81,20 @@ export const updateCustomerGroup = async ( id, data ) => {
 export const deleteCustomerGroup = async (id) => {
   try {
     const customerGroup = await CustomerGroup.findOne({ _id: id });
-    if(customerGroup){
-      await customerGroup.deleteOne();
-
-      return {
-        status: 200,
-        code: 'DELETE_CUSTOMER_GROUP_SUCCESS',
-        error: false,
-      };
-    }else{
-
+    if( !customerGroup){
       return {
         status: 404,
         code: 'CUSTOMER_GROUP_NOT_FOUND',
         error: true,
       };
     }
+    await customerGroup.updateOne({ status: 'deleted' });
+
+    return {
+      status: 200,
+      code: 'DELETE_CUSTOMER_GROUP_SUCCESS',
+      error: false,
+    };
   }catch( err ){
     logger(`deleteCustomerGroup ${err}`);
 
@@ -121,7 +117,7 @@ export const getListCustomerGroups = async (params) => {
     const customerGroups = await CustomerGroup.find({ 'name': new RegExp(regex, 'gmi') }, '_id name priority description status')
       .sort( [[`${params.sortBy}`, params.sortOrder]])
       .skip(skipRecord)
-      .limit(params.limit);
+      .limit(params.limit);// rm
     if (!customerGroups) {
 
       return {
