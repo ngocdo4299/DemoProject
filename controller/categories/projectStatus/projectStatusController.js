@@ -55,42 +55,55 @@ export const getProjectStatusDetail = async (id) => {
   }
 };
 
-export const getProjectStatuses = async (params) => {
+export const getProjectStatuses = async (search = '', page = 1, limit = 10, sortBy = 'name', sortOrder = 1) => {
   try {
-    const skipRecord = (params.page - 1) * params.limit;
-    let regex;
-
-    if( !params.search ) {
-      regex = '()+';
-    }else{
-      regex = `(${params.search})+`;
+    if ( search !== '' && (typeof search !== 'string') ){
+      search = search.toString().trim();
     }
 
-    const totalRecords = await ProjectStatus.countDocuments({ 'name': new RegExp(regex, 'gmi') });
+    if ( Number.isInteger(parseInt(page)) && parseInt(page) > 0 ){
+      page = parseInt(page);
+    } else {
+      page = 1;
+    }
+
+    if ( Number.isInteger(parseInt(limit)) && parseInt(limit) > 0 ){
+      limit = parseInt(limit);
+    } else {
+      limit = 10;
+    }
+
+    if ( ['asce', 'ASCE', 'Asce', '1'].includes(sortOrder)) {
+      sortOrder = 1;
+    }
+
+    if (['desc', 'DESC', 'Desc', '-1'].includes(sortOrder)) {
+      sortOrder = -1;
+    }
+
+    sortBy = sortBy.toString().trim();
+    if ( ! ['name', 'status'].includes(sortBy) ){
+      sortBy = 'name';
+    }
+
+    const skipRecord = (page - 1) * limit;
+    let regex = `(${search})+`;
+
+    const totalRecords = await ProjectStatus.countDocuments({ 'name': new RegExp(regex, 'gmi') }).lean();
     const projectStatus = await ProjectStatus.find({ 'name': new RegExp(regex, 'gmi') }, '_id name description status')
-      .sort( [[`${params.sortBy}`, params.sortOrder]])
+      .sort( [[`${sortBy}`, sortOrder]])
       .skip(skipRecord)
-      .limit(params.limit);
+      .limit(limit);
 
-    if (!projectStatus) {
+    const totalPage = Math.ceil(totalRecords/limit);
 
-      return {
-        status: 200,
-        code: 'GET_LIST_PRODUCT_STATUS_FAILED',
-        error: true,
-      };
-    }
-    else {
-      const totalPage = Math.ceil(totalRecords/params.limit);
-
-      return {
-        status: 200,
-        code: 'GET_LIST_PRODUCT_STATUS_SUCCESS',
-        error: false,
-        message: `Page: ${params.page}/${totalPage}`,
-        data: projectStatus,
-      };
-    }
+    return {
+      status: 200,
+      code: 'GET_LIST_PRODUCT_STATUS_SUCCESS',
+      error: false,
+      message: `Page: ${page}/${totalPage}`,
+      data: projectStatus,
+    };
   }catch (err){
     logger(`getProjectStatuses ${err}`);
 

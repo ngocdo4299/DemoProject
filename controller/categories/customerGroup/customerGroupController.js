@@ -102,41 +102,54 @@ export const deleteCustomerGroup = async (id) => {
   }
 };
 
-export const getListCustomerGroups = async (params) => {
+export const getListCustomerGroups = async (search = '', page = 1, limit = 10, sortBy = 'name', sortOrder = 1) => {
   try {
-    const skipRecord = (params.page - 1) * params.limit;
-    let regex;
-
-    if( !params.search ) {
-      regex = '()+';
-    }else{
-      regex = `(${params.search})+`;
+    if ( search !== '' && (typeof search !== 'string') ){
+      search = search.toString().trim();
     }
 
-    const totalRecords = await CustomerGroup.countDocuments({ 'name': new RegExp(regex, 'gmi') });
+    if ( Number.isInteger(parseInt(page)) && parseInt(page) > 0 ){
+      page = parseInt(page);
+    } else {
+      page = 1;
+    }
+
+    if ( Number.isInteger(parseInt(limit)) && parseInt(limit) > 0 ){
+      limit = parseInt(limit);
+    } else {
+      limit = 10;
+    }
+
+    if ( ['asce', 'ASCE', 'Asce', '1'].includes(sortOrder)) {
+      sortOrder = 1;
+    }
+
+    if (['desc', 'DESC', 'Desc', '-1'].includes(sortOrder)) {
+      sortOrder = -1;
+    }
+
+    sortBy = sortBy.toString().trim();
+    if ( ! ['name', 'status'].includes(sortBy) ){
+      sortBy = 'name';
+    }
+
+    const skipRecord = (page - 1) * limit;
+    let regex = `(${search})+`;
+
+    const totalRecords = await CustomerGroup.countDocuments({ 'name': new RegExp(regex, 'gmi') }).lean();
     const customerGroups = await CustomerGroup.find({ 'name': new RegExp(regex, 'gmi') }, '_id name priority description status')
-      .sort( [[`${params.sortBy}`, params.sortOrder]])
+      .sort( [[`${sortBy}`, sortOrder]])
       .skip(skipRecord)
-      .limit(params.limit);// rm
-    if (!customerGroups) {
+      .limit(limit);
+    const totalPage = Math.ceil(totalRecords/limit);
 
-      return {
-        status: 200,
-        code: 'GET_LIST_CUSTOMER_GROUP_FAILED',
-        error: true,
-      };
-    }
-    else {
-      const totalPage = Math.ceil(totalRecords/params.limit);
-
-      return {
-        status: 200,
-        code: 'GET_LIST_CUSTOMER_GROUP_SUCCESS',
-        error: false,
-        message: `Page: ${params.page}/${totalPage}`,
-        data: customerGroups,
-      };
-    }
+    return {
+      status: 200,
+      code: 'GET_LIST_CUSTOMER_GROUP_SUCCESS',
+      error: false,
+      message: `Page: ${page}/${totalPage}`,
+      data: customerGroups,
+    };
   }catch (err){
     logger(`getListCustomerGroups ${err}`);
 

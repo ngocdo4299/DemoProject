@@ -42,47 +42,7 @@ export const getTechStack = async (req, res) => {
 };
 
 export const getListTechStack = async (req, res) => {
-  const acceptableSortBy = ['name', 'status'];
-  const acceptableSortOrder = {
-    'asce': 1,
-    'desc': -1,
-  };
-  let queryParams = {
-    'search': undefined,
-    'page': 1,
-    'limit': 10,
-    'sortBy': 'name',
-    'sortOrder': 1,
-  };
-  if( req.query.search ){
-    queryParams.search = req.query.search.toString();
-  }
-
-  if(req.query.page){
-    if( Number.isInteger(parseInt(req.query.page)) && parseInt(req.query.page) > 0 ){
-      queryParams.page = parseInt(req.query.page);
-    }
-  }
-
-  if(req.query.limit){
-    if( Number.isInteger(parseInt(req.query.limit)) && parseInt(req.query.limit) > 0) {
-      queryParams.limit = parseInt(req.query.limit);
-    }
-  }
-
-  if( req.query.sortBy){
-    if( acceptableSortBy.includes(req.query.sortBy) ){
-      queryParams.sortBy = req.query.sortBy;
-    }
-  }
-
-  if( req.query.sortOrder ){
-    const sortOrder = req.query.sortOrder.toString().trim();
-    if( sortOrder in acceptableSortOrder){
-      queryParams.sortOrder = acceptableSortOrder[sortOrder];
-    }
-  }
-  const result = await getTechStacks(queryParams);
+  const result = await getTechStacks(req.query.search, req.query.page, req.query.limit, req.query.sortBy, req.query.sortOrder);
   res.status(result.status).json(result);
 };
 

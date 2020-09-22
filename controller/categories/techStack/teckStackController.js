@@ -52,42 +52,57 @@ export const getTechStackDetail = async (id) => {
   }
 };
 
-export const getTechStacks = async (params) => {
+export const getTechStacks = async (search = '', page = 1, limit = 10, sortBy = 'name', sortOrder = 1) => {
   try {
-    const skipRecord = (params.page - 1) * params.limit;
-    let regex;
-
-    if( !params.search ) {
-      regex = '()+';
-    }else{
-      regex = `(${params.search})+`;
+    if ( search !== '' && (typeof search !== 'string') ){
+      search = search.toString().trim();
     }
 
-    const totalRecords = await TechStack.countDocuments({ 'name': new RegExp(regex, 'gmi') });
+    if ( Number.isInteger(parseInt(page)) && parseInt(page) > 0 ){
+      page = parseInt(page);
+    } else {
+      page = 1;
+    }
+
+    if ( Number.isInteger(parseInt(limit)) && parseInt(limit) > 0 ){
+      limit = parseInt(limit);
+    } else {
+      limit = 10;
+    }
+
+    if ( ['asce', 'ASCE', 'Asce', '1'].includes(sortOrder)) {
+      sortOrder = 1;
+    }
+
+    if (['desc', 'DESC', 'Desc', '-1'].includes(sortOrder)) {
+      sortOrder = -1;
+    }
+
+    sortBy = sortBy.toString().trim();
+    if ( ! ['name', 'status'].includes(sortBy) ){
+      sortBy = 'name';
+    }
+
+    const skipRecord = (page - 1) * limit;
+    let regex = `(${search})+`;
+
+    const totalRecords = await TechStack.countDocuments({ 'name': new RegExp(regex, 'gmi') }).lean();
     const techStack = await TechStack.find({ 'name': new RegExp(regex, 'gmi') }, '_id name description status')
-      .sort( [[`${params.sortBy}`, params.sortOrder]])
+      .sort( [[`${sortBy}`, sortOrder]])
       .skip(skipRecord)
-      .limit(params.limit);
+      .limit(limit);
 
-    if (!techStack) {
 
-      return {
-        status: 200,
-        code: 'GET_LIST_TECH_STACK_FAILED',
-        error: true,
-      };
-    }
-    else {
-      const totalPage = Math.ceil(totalRecords/params.limit);
+    const totalPage = Math.ceil(totalRecords/limit);
 
-      return {
-        status: 200,
-        code: 'GET_LIST_TECH_STACK_SUCCESS',
-        error: false,
-        message: `Page: ${params.page}/${totalPage}`,
-        data: techStack,
-      };
-    }
+    return {
+      status: 200,
+      code: 'GET_LIST_TECH_STACK_SUCCESS',
+      error: false,
+      message: `Page: ${page}/${totalPage}`,
+      data: techStack,
+    };
+
   }catch (err){
     logger(`getTechStackes ${err}`);
 
